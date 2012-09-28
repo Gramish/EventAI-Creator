@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Event AI Creator</title>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript">
+
+// ## EventAI Creator based on Javascript/PHP - Created by gramish @ gramish.net
+
+
+$(document).ready(function() {
+	
+	$('#event_type').change(function() {
+		
+		description = $("#event_type option:selected").attr('descr');
+		params = $("#event_type option:selected").attr('params');
+		$('#description').html(description);
+		$('#params').html(params);
+	});
+	
+	//when submitting form we want to generate the SQL for this event.
+	$('#eventAI_form').submit(function() {
+
+		
+		sql = "INSERT INTO creature_ai_scripts (creature_id,event_type,event_chance,event_flags,event_param1,event_param2,event_param3,event_param4,action1_type,action1_param1,action1_param2,action1_param3,action2_type,action2_param1,action2_param2,action2_param3,action3_type,action3_param1,action3_param2,action3_param3,comment) VALUES ";
+		
+		//lets get values from form and insert it into the sql.
+		
+		cid = $('#cid').val();
+		event_type = $("#event_type option:selected").attr('value');
+		chance = $('#chance').val();
+		if($('#repeatable').attr('checked')) {
+		
+			repeatable = 1;	
+			
+		}
+		else {
+			
+			repeatable = 0;
+			
+		}
+		param_1 = $('#param_1').val();
+		param_2 = $('#param_2').val();
+		param_3 = $('#param_3').val();
+		param_4 = $('#param_4').val();
+		
+		action_1 = $('#action_1_event option:selected').attr('value');
+		action_2 = $('#action_2_event option:selected').attr('value');
+		action_3 = $('#action_3_event option:selected').attr('value');
+		
+		action_1_param1 = $('#action_1_param_1').val();
+		action_1_param2 = $('#action_1_param_2').val();
+		action_1_param3 = $('#action_1_param_3').val();
+		
+		action_2_param1 = $('#action_2_param_1').val();
+		action_2_param2 = $('#action_2_param_2').val();
+		action_2_param3 = $('#action_2_param_3').val();
+		
+		action_3_param1 = $('#action_3_param_1').val();
+		action_3_param2 = $('#action_3_param_2').val();
+		action_3_param3 = $('#action_3_param_3').val();
+		comment = $('#comment').val();
+		sql += "("+cid+","+event_type+","+chance+","+repeatable+","+param_1+","+param_2+","+param_3+","+param_4+","+action_1+","+action_1_param1+","+action_1_param2+","+action_1_param3+","+action_2+","+action_2_param1+","+action_2_param2+","+action_2_param3+","+action_3+","+action_3_param1+","+action_3_param2+","+action_3_param3+",'"+comment+"')";
+		
+		$('.text-success').html(sql);
+		return false;
+	});
+	
+});
+
+</script>
+</head>
+<style type="text/css">
+.form label {
+	font-weight: bold
+}
+</style>
+
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container"> <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a> <a class="brand" href="#">EventAI Creator</a>
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+          <li class="active"><a href="index.html">Home</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </div>
+      <!--/.nav-collapse --> 
+    </div>
+  </div>
+</div>
+<div class="container" style="margin-top:55px">
+  <h1>Event AI Creator</h1>
+  <p>Made for creating Creature AI scripts for <a href="">MangosZero</a> with ease, credits go to <a href="https://github.com/Konctantin/EventAICreator">EventAICreator</a> for descriptions + idea..</p>
+  <form class="form" id="eventAI_form" method="post" action"#" >
+    <pre class="text-success"></pre>
+    <label>Creature ID</label>
+    <input value="0" type="text" class="input-mini" id="cid" name="cid" placeholder="Creature ID">
+    <h3>Events</h3>
+    <label>Event Type</label>
+    <select id="event_type" name="event_type">
+      <option value="0" params="InitialMin, InitialMax, RepeatMin, RepeatMax" descr="Expires at first between (Param1) and (Param2) and then will repeat between every (Param3) and (Param4),  EXPIRES ONLY IN COMBAT">Timer</option>
+      <option value="1" params="InitialMin, InitialMax, RepeatMin, RepeatMax" descr="Expires at first between (Param1) and (Param2) and then will repeat between every (Param3) and (Param4),  EXPIRES ONLY OUT OF COMBAT.">Timer Out of Combat</option>
+      <option value="2" params="HPMax%, HPMin%, RepeatMin, RepeatMax" descr="Expires when the Creature's HP is between (Param1) and (Param2). Will repeat between every (Param3) and (Param4).">HP</option>
+      <option value="3" params="ManaMax%,ManaMin% RepeatMin, RepeatMax" descr="Expires once the Creature's Mana% is between (Param1) and (Param2). Will repeat between every (Param3) and (Param4).">Mana</option>
+      <option value="4" params="NONE"  descr="Expires ONLY upon the Creature's INITIAL Aggro at the Start of Combat (Does NOT Repeat).">Aggro</option>
+      <option value="5" params="RepeatMin, RepeatMax" descr="Expires upon Killing a Player. Will repeat between (Param1) and (Param2).">Kill</option>
+      <option value="6" params="NONE" descr="Expires upon the Creature's Death. (This Triggers At The Moment The Creature Dies)">Death</option>
+      <option value="7" params="NONE" descr="Expires at the moment the Creature EnterEvadeMode().">Evade</option>
+      <option value="8" params="SpellID, Schoolmask, RepeatMin, RepeatMax" descr="Expires upon a Spell Hit on the Creature. When (param1) is set, it is the specific Spell ID used as the trigger. With (param2) specified, the expiration is limited to specific spell schools (-1 for all). Will repeat every (Param3) and (Param4). Only A Spell ID or Spell School may be Specified but NOT both.">Spellhit</option>
+      <option value="9" params="MinDist, MaxDist, RepeatMin, RepeatMax" descr="Expires when the Highest Threat Target Distance is Greater than (Param1) and Less than (Param2). Will repeat between every (Param3) and (Param4).">Range</option>
+      <option value="10" params="Hostile-or-Not, MaxAllowedRange, RepeatMin, RepeatMax" descr="Expires when a unit moves within distance (MaxAllowedRange) of a creature. If (Param1) is zero it will expire only when unit is hostile, friendly otherwise (Param1 = 1), depends generally on faction. Will repeat every (Param3) and (Param4). Does not expire when the creature is in combat.">Line of Sight OOC</option>
+      <option value="11" params="NONE" descr="Expires on initial spawn and on creature respawn (useful for setting ranged movement type).">Spawn</option>
+      <option value="12" params="HPMax%, HPMin%, RepeatMin, RepeatMax" descr="Expires when current target's HP is between (Param1) and (Param2). Will repeat every (Param3) and (Param4).">Target HP</option>
+      <option value="13" params="RepeatMin, RepeatatMax"  descr="Expires when the current target is casting a spell. Will repeat every (Param1) and (Param2).">Target Casting</option>
+      <option value="14" params="HPDeficit, Radius, RepeatMin, RepeatMax" descr="Expires when a friendly unit in radius has at least (Param1) HP missing. Will repeat every (Param3) and (Param4).">Friendly HP</option>
+      <option value="15" params="DispelType, Radius, RepeatMin, RepeatMax" descr="Expires when a friendly unit is crowd controlled within the given radius (Param2). Will repeat every (Param3) and (Param4).">Friendly Crowdcontrolled</option>
+      <option value="16" params="SpellId, Radius, RepeatMin, RepeatMax" descr="Expires when a friendly unit is missing aura(s) given by a spell (Param1) within radius (Param2). Will repeat every (Param3) and (Param4).">Friendly missing buff</option>
+      <option value="17" params="CreatureId, RepeatMin, RepeatMax" descr="Expires after creature with entry = (Param1) is spawned (Param1 = 0 means all spawns). Will repeat every (Param2) and (Param3).">Summoned Unit</option>
+      <option value="18" params="ManaMax%, ManaMin%, RepeatMin, RepeatMax" descr="Expires when current target's Mana is between (Param1) and (Param2). Will repeat every (Param3) and (Param4).">Target Mana</option>
+      <option value="21" params="NONE" descr="Expires when a creature reaches it's home (spawn) location after evade.">Reached Home (Spawn Location)</option>
+      <option value="22" params="EmoteId, Condition, CondValue1, CondValue2" descr="Expires when a creature receives an emote with emote text id (enum TextEmotes) in (Param1). Conditions can be defined (Param2) with optional values (Param3,Param4), see enum ConditionType." >Recieve Emote</option>
+      <option value="23" params="SpellID, AmmountInStack, RepeatMin, RepeatMax" descr="Expires when a creature has spell (Param1) auras applied in a stack greater or equal to value provided in (Param2). Will repeat every (Param3) and (Param4).">Self Aura Applied</option>
+      <option value="24" params="SpellID, AmmountInStack, RepeatMin, RepeatMax" descr="Expires when the current target unit has spell (Param1) auras applied in a stack greater or equal to value provided in (Param2). Will repeat every (Param3) and (Param4).">Target Aura Applied</option>
+      <option value="25" params="CreatureId, RepeatMin, RepeatMax" descr="Expires after creature with entry = (Param1) is die (Param1 = 0 means all spawns). Will repeat every (Param2) and (Param3).">Summoned Creature Just Died</option>
+      <option value="26" params="CreatureId, RepeatMin, RepeatMax" descr="Expires before creature with entry = (Param1) is despawn (Param1 = 0 means all spawns). Will repeat every (Param2) and (Param3).">Summoned Creature Despawned</option>
+      <option value="27" params="SpellID, AmmountInStack, RepeatMin, RepeatMax" descr="Expires when a creature not has spell (Param1) auras applied in a stack greater or equal to value provided in (Param2). Will repeat every (Param3) and (Param4).">Self Missing Aura</option>
+      <option value="28" params="SpellID, AmmountInStack, RepeatMin, RepeatMax" descr="Expires when when the current target unit not has spell (Param1) auras applied in a stack greater or equal to value provided in (Param2). Will repeat every (Param3) and (Param4).
+">Target Missing Aura</option>
+    </select>
+    <label>Event Description</label>
+    <blockquote>
+      <pre id="description"></pre>
+    </blockquote>
+    <label>Event Chance</label>
+    <div class="input-append">
+      <input class="input-mini" name="chance" id="chance" value="0" size="8" type="text">
+      <span class="add-on">%</span> </div>
+    <br/>
+    <label class="checkbox">
+      <input type="checkbox" value="1" name="repeatable" id="repeatable">
+      Repeatable </label>
+    <br/>
+    <label>Event Parameters (<span class="text-info" id="params"></span>)</label>
+    <input type="text" class="input-mini" value="0" name="param_1" id="param_1" placeholder="Param 1"/>
+    <input type="text" id="param_2"  name="param_2" value="0" class="input-mini" placeholder="Param 2"/>
+    <input id="param_3" name="param_3" type="text" class="input-mini" value="0" placeholder="Param 3"/>
+    <input type="text" value="0" id="param_4" class="input-mini"  name="param_4" placeholder="Param 4"/>
+    <br/>
+    <h3>Actions</h3>
+    <div class="row">
+      <div class="span4">
+        <h4>Action 1</h4>
+        <select name="action_1_event" id="action_1_event">
+          <option value="0">Does nothing</option>
+          <option value="1" descr="Simply displays the specified -TextId. When -TextId2 and -TextId3 are specified, the selection will be randomized. Text types are defined, along with other options for the text, in a table below. All values needs to be negative.">Says text</option>
+          <option value="2" descr="Changes faction for a creature. When param1 is zero, creature will revert to it's default faction.">Set Faction</option>
+          <option value="3" descr="Set either model from creature_template.entry (Param1) OR explicit modelId (Param2). If (Param1) AND (Param2) are both 0, demorph and revert to the default model.">Morph</option>
+          <option value="4">Plays a sound</option>
+          <option value="5">Does an emote</option>
+          <option value="9">Random Sound *</option>
+          <option value="10">Random Emote *</option>
+          <option value="11" params="SpellId, Target, CastFlags" descr="Casts spell (Param1) on a target (Param2) using cast flags (specified below).">Cast spell</option>
+        </select>
+        <label>Action 1 Parameters (<span class="text-info" id="params_action_1"></span>)</label>
+        <input type="text" class="input-mini" value="0" placeholder="Param 1" id="action_1_param_1" name="action_1_param_1"/>
+        <input type="text" id="action_1_param_2" class="input-mini" name="action_1_param_2" value="0" placeholder="Param 2"/>
+        <input type="text" name="action_1_param_3" id="action_1_param_3" class="input-mini" value="0" placeholder="Param 3"/>
+      </div>
+      <div class="span4">
+        <h4 >Action 2</h4>
+        <select name="action_2_event" id="action_2_event">
+          <option value="0">Does nothing</option>
+          <option value="1" descr="Simply displays the specified -TextId. When -TextId2 and -TextId3 are specified, the selection will be randomized. Text types are defined, along with other options for the text, in a table below. All values needs to be negative.">Says text</option>
+          <option value="2" descr="Changes faction for a creature. When param1 is zero, creature will revert to it's default faction.">Set Faction</option>
+          <option value="3" descr="Set either model from creature_template.entry (Param1) OR explicit modelId (Param2). If (Param1) AND (Param2) are both 0, demorph and revert to the default model.">Morph</option>
+          <option value="4">Plays a sound</option>
+          <option value="5">Does an emote</option>
+          <option value="9">Random Sound *</option>
+          <option value="10">Random Emote *</option>
+          <option value="11" params="SpellId, Target, CastFlags" descr="Casts spell (Param1) on a target (Param2) using cast flags (specified below).">Cast spell</option>
+        </select>
+        <label>Action 2 Parameters (<span class="text-info" id="params_action_1"></span>)</label>
+        <input type="text" class="input-mini" value="0" id="action_2_param_1" placeholder="Param 1" name="action_2_param_1"/>
+        <input value="0" type="text" id="action_2_param_2" class="input-mini" name="action_2_param_2" placeholder="Param 2"/>
+        <input type="text" name="action_2_param_3" id="action_2_param_3" value="0" class="input-mini" placeholder="Param 3"/>
+      </div>
+      <div class="span4">
+    <h4>Action 3</h4>
+    <select name="action_3_event" id="action_3_event">
+      <option value="0">Does nothing</option>
+      <option value="1" descr="Simply displays the specified -TextId. When -TextId2 and -TextId3 are specified, the selection will be randomized. Text types are defined, along with other options for the text, in a table below. All values needs to be negative.">Says text</option>
+      <option value="2" descr="Changes faction for a creature. When param1 is zero, creature will revert to it's default faction.">Set Faction</option>
+      <option value="3" descr="Set either model from creature_template.entry (Param1) OR explicit modelId (Param2). If (Param1) AND (Param2) are both 0, demorph and revert to the default model.">Morph</option>
+      <option value="4">Plays a sound</option>
+      <option value="5">Does an emote</option>
+      <option value="9">Random Sound *</option>
+      <option value="10">Random Emote *</option>
+      <option value="11" params="SpellId, Target, CastFlags" descr="Casts spell (Param1) on a target (Param2) using cast flags (specified below).">Cast spell</option>
+    </select>
+    <label>Action 3 Parameters (<span class="text-info" id="params_action_1"></span>)</label>
+    <input type="text" class="input-mini" value="0" id="action_3_param_1" placeholder="Param 1" name="action_3_param_1"/>
+    <input type="text" value="0" id="action_3_param_2" class="input-mini" name="action_3_param_2" placeholder="Param 2"/>
+    <input type="text" name="action_3_param_3" id="action_3_param_3" value="0" class="input-mini"  placeholder="Param 3"/>
+    </div>
+    </div>
+    <br/>
+    <h4>Comment</h4>
+    <i class="text-danger">Please leave a comment.</i><br/>
+    <textarea id="comment"></textarea>
+    <br/>
+    <input type="submit" value="Generate SQL" class="btn btn-primary span4" />
+  </form>
+</div>
+<!-- /container -->
+</body>
+</html>
